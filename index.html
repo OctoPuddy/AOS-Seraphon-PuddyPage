@@ -15,8 +15,8 @@
     .container {
       position: relative;
       width: 100%;
-      aspect-ratio: 1200/1719;
-      background-image: url('Slann.png');
+      aspect-ratio: 1200/1667;
+      background-image: url('slann.png');
       background-size: cover;
       background-repeat: no-repeat;
       background-position: center top;
@@ -29,7 +29,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      font-size: 1.5em;
+      font-size: 1.6em;
       padding: 0.2vw;
       border: 2px solid #999;
       border-radius: 0.4vw;
@@ -44,8 +44,8 @@
     .notes-container {
       position: absolute;
       width: 35.5%;
-      height: 9%;
-      top: 32%;
+      height: 6%;
+      top: 31%;
       left: 60.5%;
     }
 
@@ -53,7 +53,7 @@
       width: 100%;
       height: 100%;
       resize: none;
-      font-size: 1.8em;
+      font-size: 1.6em;
       text-transform: uppercase;
       padding: 0.3em;
       border-radius: 0.4em;
@@ -64,9 +64,9 @@
 
     #reset-btn {
       position: absolute;
-      top: 1.55%;
-      right: 3.3%;
-      padding: 0.5em 1em;
+      top: 2.2%;
+      right: 3.5%;
+      padding: 0.2em;
       font-size: 1em;
       border: none;
       border-radius: 0.4em;
@@ -90,19 +90,19 @@
     <div class="toggle" data-type="positive" data-label="MOVE" style="top: 23%; left: 80%;">+1 MOVE</div>
     <div class="toggle" data-type="negative" data-label="MOVE" style="top: 27%; left: 80%;">-1 MOVE</div>
     <div class="toggle" data-type="positive" data-label="SAVE" style="top: 31%; left: 2%;">+1 SAVE</div>
-    <div class="toggle" data-type="negative" data-label="SAVE" style="top: 34%; left: 2%;">-1 SAVE</div>
+    <div class="toggle" data-type="negative" data-label="SAVE" style="top: 35%; left: 2%;">-1 SAVE</div>
     <div class="toggle" data-type="positive" data-label="WARD" style="top: 31%; left: 21.5%;">+1 WARD</div>
-    <div class="toggle" data-type="negative" data-label="WARD" style="top: 34%; left: 21.5%;">-1 WARD</div>
+    <div class="toggle" data-type="negative" data-label="WARD" style="top: 35%; left: 21.5%;">-1 WARD</div>
     <div class="toggle" data-type="positive" data-label="CAST" style="top: 31%; left: 41%;">+1 CAST</div>
-    <div class="toggle" data-type="negative" data-label="CAST" style="top: 34%; left: 41%;">-1 CAST</div>
+    <div class="toggle" data-type="negative" data-label="CAST" style="top: 35%; left: 41%;">-1 CAST</div>
 
     <!-- Champ de notes -->
     <div class="notes-container">
-      <textarea placeholder="..."></textarea>
+      <textarea placeholder=""></textarea>
     </div>
 
     <!-- Bouton réinitialiser -->
-    <button id="reset-btn">Réinitialiser</button>
+    <button id="reset-btn">Reset</button>
   </div>
 
   <script>
