@@ -94,6 +94,7 @@ button:hover {
   padding: 1.5%;
 }
 
+
 .top-card-slot {
   background-color: #111;
   border-radius: 0.6em;
@@ -101,14 +102,19 @@ button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  aspect-ratio: 752 / 674; /* Ratio exact des images spell */
 }
+
 
 .top-card-slot img {
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: contain;
   display: block;
 }
+
+
+
 
 .separator {
   display: flex;
@@ -217,146 +223,152 @@ button:hover {
     <a class="image-button" href="realmshaper.html" data-id="Realmshaper"><img src="boutons/realmshaper.png" alt="Realmshaper"></a>
   </div>
 
-  <script>
-    const allCards = Array.from(document.querySelectorAll('.image-button'));
-    const cardContainer = document.getElementById('cardContainer');
-    const dragToggleBtn = document.getElementById('dragToggleBtn');
-    const filterDropdown = document.getElementById('filterDropdown');
-    let sortableInstance = null;
+<script>
+  const allCards = Array.from(document.querySelectorAll('.image-button'));
+  const cardContainer = document.getElementById('cardContainer');
+  const dragToggleBtn = document.getElementById('dragToggleBtn');
+  const filterDropdown = document.getElementById('filterDropdown');
+  let sortableInstance = null;
 
-    function toggleDropdown(id) {
-      document.querySelectorAll('.dropdown-panel').forEach(drop => {
-        drop.style.display = (drop.id === id && drop.style.display !== 'flex') ? 'flex' : 'none';
+  function toggleDropdown(id) {
+    document.querySelectorAll('.dropdown-panel').forEach(drop => {
+      drop.style.display = (drop.id === id && drop.style.display !== 'flex') ? 'flex' : 'none';
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    const isButton = e.target.tagName === 'BUTTON';
+    const inDropdown = e.target.closest('.dropdown-panel');
+    if (!isButton && !inDropdown) {
+      document.querySelectorAll('.dropdown-panel').forEach(drop => drop.style.display = 'none');
+    }
+  });
+
+  const ids = allCards.map(card => card.dataset.id);
+  ids.forEach(id => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = getVisibility(id);
+    checkbox.onchange = () => {
+      setVisibility(id, checkbox.checked);
+      updateCardVisibility();
+    };
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(id));
+    filterDropdown.appendChild(label);
+  });
+
+  function setVisibility(id, visible) {
+    localStorage.setItem('visible-' + id, visible ? '1' : '0');
+  }
+
+  function getVisibility(id) {
+    const value = localStorage.getItem('visible-' + id);
+    return value === null ? true : value === '1';
+  }
+
+  function updateCardVisibility() {
+    allCards.forEach(card => {
+      const id = card.dataset.id;
+      card.classList.toggle('hidden', !getVisibility(id));
+    });
+  }
+
+  function resetAllData() {
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (
+        key.startsWith("buttonsState-") ||
+        key.startsWith("notesText-") ||
+        key.startsWith("visible-") ||
+        key === "cardOrder"
+      ) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    location.reload();
+  }
+
+  function saveCardOrder() {
+    const order = Array.from(cardContainer.children).map(card => card.dataset.id);
+    localStorage.setItem("cardOrder", JSON.stringify(order));
+  }
+
+  function loadCardOrder() {
+    const order = JSON.parse(localStorage.getItem("cardOrder") || "[]");
+    if (order.length) {
+      const cardMap = Object.fromEntries(allCards.map(c => [c.dataset.id, c]));
+      order.forEach(id => {
+        const card = cardMap[id];
+        if (card) cardContainer.appendChild(card);
       });
     }
+  }
 
-    document.addEventListener('click', (e) => {
-      const isButton = e.target.tagName === 'BUTTON';
-      const inDropdown = e.target.closest('.dropdown-panel');
-      if (!isButton && !inDropdown) {
-        document.querySelectorAll('.dropdown-panel').forEach(drop => drop.style.display = 'none');
-      }
-    });
-
-    const ids = allCards.map(card => card.dataset.id);
-    ids.forEach(id => {
-      const label = document.createElement('label');
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.checked = getVisibility(id);
-      checkbox.onchange = () => {
-        setVisibility(id, checkbox.checked);
-        updateCardVisibility();
-      };
-      label.appendChild(checkbox);
-      label.appendChild(document.createTextNode(id));
-      filterDropdown.appendChild(label);
-    });
-
-    function setVisibility(id, visible) {
-      localStorage.setItem('visible-' + id, visible ? '1' : '0');
-    }
-
-    function getVisibility(id) {
-      const value = localStorage.getItem('visible-' + id);
-      return value === null ? true : value === '1';
-    }
-
-    function updateCardVisibility() {
-      allCards.forEach(card => {
-        const id = card.dataset.id;
-        card.classList.toggle('hidden', !getVisibility(id));
+  function toggleDrag() {
+    if (sortableInstance) {
+      sortableInstance.destroy();
+      sortableInstance = null;
+      dragToggleBtn.textContent = "Déverrouiller";
+      dragToggleBtn.classList.remove("active");
+    } else {
+      sortableInstance = new Sortable(cardContainer, {
+        animation: 150,
+        onEnd: saveCardOrder
       });
+      dragToggleBtn.textContent = "Verrouiller";
+      dragToggleBtn.classList.add("active");
     }
+  }
 
-    function resetAllData() {
-      const keysToRemove = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (
-          key.startsWith("buttonsState-") ||
-          key.startsWith("notesText-") ||
-          key.startsWith("visible-") ||
-          key === "cardOrder"
-        ) {
-          keysToRemove.push(key);
-        }
-      }
-      keysToRemove.forEach(key => localStorage.removeItem(key));
-      location.reload();
-    }
+  function updateTopCard(slotId, imgPath) {
+    const slot = document.getElementById(slotId);
+    slot.innerHTML = imgPath ? `<img src="${imgPath}" alt="">` : '';
+  }
 
-    function saveCardOrder() {
-      const order = Array.from(cardContainer.children).map(card => card.dataset.id);
-      localStorage.setItem("cardOrder", JSON.stringify(order));
-    }
+  document.querySelectorAll('.dropdown-panel input[type="radio"]').forEach(input => {
+    const key = input.dataset.key;
+    const img = input.dataset.img;
+    const slotMap = {
+      'battle': 'slot-battle',
+      'spell': ['slot-spell-1', 'slot-spell-2', 'slot-spell-3'],
+      'mani': 'slot-mani'
+    };
+    const group = input.name;
 
-    function loadCardOrder() {
-      const order = JSON.parse(localStorage.getItem("cardOrder") || "[]");
-      if (order.length) {
-        const cardMap = Object.fromEntries(allCards.map(c => [c.dataset.id, c]));
-        order.forEach(id => {
-          const card = cardMap[id];
-          if (card) cardContainer.appendChild(card);
-        });
-      }
-    }
-
-    function toggleDrag() {
-      if (sortableInstance) {
-        sortableInstance.destroy();
-        sortableInstance = null;
-        dragToggleBtn.textContent = "Déverrouiller";
-        dragToggleBtn.classList.remove("active");
+    // Restauration depuis localStorage
+    if (localStorage.getItem(key) === "1") {
+      input.checked = true;
+      if (group === 'spell') {
+        slotMap[group].forEach((id, i) => updateTopCard(id, img.replace('.png', `${i + 1}.png`)));
       } else {
-        sortableInstance = new Sortable(cardContainer, {
-          animation: 150,
-          onEnd: saveCardOrder
-        });
-        dragToggleBtn.textContent = "Verrouiller";
-        dragToggleBtn.classList.add("active");
+        updateTopCard(slotMap[group], img);
       }
     }
 
-    function updateTopCard(slotId, imgPath) {
-      const slot = document.getElementById(slotId);
-      slot.innerHTML = imgPath ? `<img src="${imgPath}" alt="">` : '';
-    }
-
-    document.querySelectorAll('.dropdown-panel input[type="radio"]').forEach(input => {
-      const key = input.dataset.key;
-      const img = input.dataset.img;
-      const slotMap = {
-        'battle': 'slot-battle',
-        'spell': ['slot-spell-1', 'slot-spell-2', 'slot-spell-3'],
-        'mani': 'slot-mani'
-      };
-      const group = input.name;
-
-      if (localStorage.getItem(key) === "1") {
-        input.checked = true;
-        if (group === 'spell') {
-          slotMap[group].forEach(id => updateTopCard(id, img));
-        } else {
-          updateTopCard(slotMap[group], img);
-        }
-      }
-
-      input.addEventListener("change", () => {
-        document.querySelectorAll(`input[name="${group}"]`).forEach(i => {
-          localStorage.setItem(i.dataset.key, "0");
-        });
-        localStorage.setItem(key, "1");
-        if (group === 'spell') {
-          slotMap[group].forEach(id => updateTopCard(id, img));
-        } else {
-          updateTopCard(slotMap[group], img);
-        }
+    input.addEventListener("change", () => {
+      document.querySelectorAll(`input[name="${group}"]`).forEach(i => {
+        localStorage.setItem(i.dataset.key, "0");
       });
-    });
+      localStorage.setItem(key, "1");
 
-    loadCardOrder();
-    updateCardVisibility();
-  </script>
+      if (group === 'spell') {
+        slotMap[group].forEach(id => updateTopCard(id, null));
+        slotMap[group].forEach((id, i) => {
+          updateTopCard(id, img.replace('.png', `${i + 1}.png`));
+        });
+      } else {
+        updateTopCard(slotMap[group], img);
+      }
+    });
+  });
+
+  loadCardOrder();
+  updateCardVisibility();
+</script>
+
 </body>
 </html>
