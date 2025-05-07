@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Index AOS</title>
-  <meta name="viewport" content="width=1200">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet" />
   <style>
 html, body {
@@ -12,18 +12,16 @@ html, body {
   background-color: #222;
   font-family: sans-serif;
   overflow-x: hidden;
-  touch-action: manipulation;
+  overflow-y: auto;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  height: 100vh;
 }
 
 header {
-  height: 80px;
+  height: 5vh;
   background-color: #222;
-  position: sticky;
-  top: 0;
-  z-index: 10;
   padding: 0 2%;
   display: flex;
   align-items: center;
@@ -87,7 +85,7 @@ button:hover {
 }
 
 .section-top {
-  height: 753.5px;
+  height: 45vh;
   background-color: #222;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -113,14 +111,14 @@ button:hover {
 }
 
 .separator {
+  height: 2vh;
   text-align: center;
   font-family: 'Roboto', sans-serif;
   font-size: 1.2em;
   color: #ccc;
   border-top: 1px solid #444;
   border-bottom: 1px solid #444;
-  padding: 0.4em;
-  margin: 1em 0;
+  padding: 0.2em;
   background-color: #222;
 }
 
@@ -133,8 +131,7 @@ button:hover {
 
 .image-button {
   width: 100%;
-  max-height: 417px;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 1200 / 1667;
   overflow: hidden;
   transition: transform 0.2s ease;
   touch-action: auto;
@@ -203,7 +200,7 @@ button:hover {
     <div class="top-card-slot" id="slot-spell-3"></div>
   </div>
 
-  <div class="separator">Roaster</div>
+  <div class="separator">Armée</div>
 
   <div class="section-rest" id="cardContainer">
     <!-- Vignettes -->
